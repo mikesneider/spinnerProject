@@ -1,0 +1,95 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using spinnerProject.Data
+@using static System.Net.WebRequestMethods
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+<SpinLoader IsLoading="@(isLoading)" Spinner="SpinnerType.Grid" Color="#00BDF0" Center>
+    <ContentTemplate>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Temp. (C)</th>
+                    <th>Temp. (F)</th>
+                    <th>Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var forecast in forecasts)
+                {
+                    <tr>
+                        <td>@forecast.Date.ToShortDateString()</td>
+                        <td>@forecast.TemperatureC</td>
+                        <td>@forecast.TemperatureF</td>
+                        <td>@forecast.Summary</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </ContentTemplate>
+</SpinLoader>
+
+            <input  type="button" 
+            value="Denunciar Cuenta" 
+            class="red-button login-button" 
+            @onclick=" () => Hacer()" />
+
+@code {
+    private WeatherForecast[]? forecasts;
+    private bool hasError = false;
+    private bool isLoading = true;
+
+    protected override bool ShouldRender()
+    {
+        return base.ShouldRender();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        //isLoading = true;
+        //await Task.Delay(5000);
+        try
+        {
+            //
+            isLoading = true;
+
+            forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+            //forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+            //await Task.Delay(2000);
+            Console.WriteLine("waiting 2 secs");
+            isLoading = false;
+            ShouldRender();
+        }
+        catch (Exception er)
+        {
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
+        
+    }
+    public async Task Hacer()
+        {
+            isLoading = true;
+
+            forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+            //forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+            await Task.Delay(2000);
+            Console.WriteLine("waiting 2 secs");
+            isLoading = false;
+            ShouldRender();
+        }
+    
+
+    
+}
